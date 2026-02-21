@@ -88,7 +88,7 @@
       }
 
       el.innerHTML = items.map(item => {
-        const title = escapeHtml(item.title || '');
+        const title = escapeHtml(item.display_title || item.title || '');
         const source = escapeHtml(item.source || '');
         const url = item.url || '#';
 
