@@ -32,10 +32,22 @@
     }
 
     .story {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  margin-bottom: 30px;
+}
+
+.headline {
   font-size: 20px;
   line-height: 1.5;
-  margin-bottom: 30px;
-  cursor: pointer;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #777;
+  letter-spacing: 0.2px;
 }
 
 
@@ -59,18 +71,46 @@
     <div class="site-title">Stranger Than Normal</div>
     <div class="tagline">Reality continues.</div>
 
-    <div class="story">Initial Outcome Did Not Alter Strategy</div>
-    <div class="story">Confidence Levels Remained Noticeably High</div>
-    <div class="story">Authorities Responded To Unexpected Developments</div>
-    <div class="story">Situation Escalated Despite Prior Assumptions</div>
-    <div class="story">Explanation Offered Raised Additional Questions</div>
+    <div id="feed"></div>
 
-    <div class="section">Further Developments</div>
+<script>
+  async function loadFeed() {
+    const el = document.getElementById('feed');
 
-    <div class="story">Attempt To Simplify Matters Produced Opposite Result</div>
-    <div class="story">Misinterpretation Set Off Sequence Of Events</div>
-    <div class="story">Resolution Effort Introduced New Complications</div>
+    try {
+      const res = await fetch('/data/stories.json', { cache: 'no-store' });
+      const data = await res.json();
+      const items = (data.items || []).slice(0, 35);
 
-  </div>
+      if (!items.length) {
+        el.innerHTML = '<div class="story"><div class="headline">Nothing published yet.</div><div class="meta">Mark INBOX rows as Publish.</div></div>';
+        return;
+      }
+
+      el.innerHTML = items.map(item => {
+        const title = escapeHtml(item.title || '');
+        const source = escapeHtml(item.source || '');
+        const url = item.url || '#';
+
+        return `
+          <a class="story" href="${url}" target="_blank" rel="noopener noreferrer">
+            <div class="headline">${title}</div>
+            <div class="meta">${source}</div>
+          </a>
+        `;
+      }).join('');
+    } catch (e) {
+      el.innerHTML = '<div class="story"><div class="headline">Feed temporarily unavailable.</div><div class="meta">Try again shortly.</div></div>';
+    }
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, (c) => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
+  }
+
+  loadFeed();
+</script>
 </body>
 </html>
