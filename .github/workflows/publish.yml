@@ -27,7 +27,7 @@ jobs:
           node -e "const fs=require('fs'); const j=JSON.parse(fs.readFileSync('data/stories.json','utf8')); if(!j.items) throw new Error('Invalid JSON (missing items)'); console.log('Items:', j.items.length);"
 
       - name: Commit & push if changed
-              - name: Commit & push if changed
+
         run: |
           set -euo pipefail
           if git diff --quiet; then
